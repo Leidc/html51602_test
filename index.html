@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ajax_json</title>
+    <style type="text/css">
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+      .ul  li {
+            list-style: none;
+        }
+
+        .ul li span {
+            margin-right: 150px;
+            text-align: center;
+        }
+
+    </style>
+    <script type="text/javascript">
+        function getSource() {
+            //创建请求
+            var request = null;
+            if (window.ActiveXObject) {
+                request = new window.ActiveXObject("Microsoft.XMLHTT")
+            } else {
+                request = new XMLHttpRequest();
+            }
+            //打开链接
+             request.open('get', 'http://101.200.173.217:8080/FootBall/tweet/json/query/hotspot.do?category=1&page.pageNo=1', true);
+             // request.open('get', 'http://127.0.157.11/json.txt', true);
+            //绑定事件回调
+
+            request.onreadystatechange = function () {
+                var readyState = request.readyState;
+                if (readyState == 0) {
+//                      alert("伙计:水壶还没水，快来倒入水")
+                }else if(readyState ==1){
+                     // alert("水倒入完毕，已经放在燃气灶上面");
+                }else if(readyState ==2){
+                  //  alert("燃气灶已经点火，准备工作一切到位")
+                }else if (readyState == 4) {//响应完成
+                  //  alert("警报:水烧好了");
+                    if (request.status == 200) {//热水已经处理好，赶快告诉妈
+                        var content = request.responseText
+                        var jsonlist = JSON.parse(content);//将字符转化成json格式
+                        var ul = document.getElementsByClassName("ul")[0];
+
+                        var fragment=document.createDocumentFragment();//利用碎片提高性能
+
+                        for (var i in jsonlist) {
+                            var name = jsonlist[i].name;
+                            var age = jsonlist[i].age;
+                            var li = document.createElement("li");
+                            li.className="li";
+                            var first_span = document.createElement("span");
+                            first_span.innerText = name;
+                            var second_span = document.createElement("span");
+                            second_span.innerText = age;
+                            li.appendChild(first_span);
+                            li.appendChild(second_span);
+                            fragment.appendChild(li);
+                        }
+                        ul.appendChild(fragment);
+                    }
+                }
+            };
+            request.send();
+            //alert("一边烧水 一边干活");
+        }
+    </script>
+</head>
+<body>
+<div id="content">
+    <ul class="ul">
+        <li ><span>姓名</span><span>年龄</span></li>
+        <li ><span>张三</span><span>18</span></li>
+        <li ><span>李四</span><span>20</span></li>
+        <li ><span>王五</span><span>22</span></li>
+    </ul>
+</div>
+<button id="btn" onclick="getSource()">点击获取数据源</button>
+
+</body>
+</html>
